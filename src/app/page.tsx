@@ -1,17 +1,14 @@
-"use client"
-
 import LandingHero from '@/components/layouts/LandingHero';
-import { Button } from '@/components/ui/button';
-import { Upload } from 'lucide-react';
-import { useSignMessage } from 'wagmi'
+import LandingIntermezzo from '@/components/layouts/LandingIntermezzo';
+import LandingOngoingCampaigns from '@/components/layouts/LandingOngoingCampaigns';
 
 export default function Home() {
-
-	const { signMessage } = useSignMessage()
 
 	return (
 		<>
 			<LandingHero/>
+			<LandingIntermezzo/>
+			<LandingOngoingCampaigns/>
 		</>
 	);
 }

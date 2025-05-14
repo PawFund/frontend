@@ -4,6 +4,7 @@ import Navbar from "@/components/layouts/Navbar";
 import { headers } from "next/headers";
 import Web3Provider from "./Web3Provider";
 import "./globals.css";
+import Footer from "@/components/layouts/Footer";
 
 const BagelFatOne = Bagel_Fat_One({
 	variable: "--font-bagel-fat-one",
@@ -40,6 +41,7 @@ export default async function RootLayout({
 					<main className="max-w-7xl mx-auto px-4 lg:px-8">
 						{children}
 					</main>
+					<Footer/>
 				</Web3Provider>
 			</body>
 		</html>
