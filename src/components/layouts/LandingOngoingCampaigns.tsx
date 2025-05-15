@@ -2,10 +2,11 @@ import { accentElements } from "@/assets";
 import Image from "next/image";
 import CampaignCard from "../containers/CampaignCard";
 import { imageAssets } from "@/assets";
+import { Button } from "../ui/button";
 
 export default function LandingOngoingCampaigns() {
     return (
-        <section className="w-full mt-14">
+        <section className="w-full mt-14 flex flex-col items-center justify-center">
             <div className="flex gap-6 sm:gap-10 items-center justify-center">
                 <Image src={accentElements.PawIconSecondary} width={40} alt="paw icon secondary" className="hidden sm:block"/>
                 <Image src={accentElements.PawIconSecondary} alt="paw icon secondary"/>
@@ -33,6 +34,9 @@ export default function LandingOngoingCampaigns() {
                     ))
                 }
             </div>
+            <Button className="text-white bg-neutral-800 mt-9 hover:bg-neutral-950 mx-auto">
+                Find Other Campaigns
+            </Button>
         </section>
     );
 }
