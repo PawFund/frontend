@@ -9,26 +9,35 @@ import { formatUnits } from 'viem'
 import { Skeleton } from "@/components/ui/skeleton";
 import { truncateAddress } from "@/lib/utils";
 import { Icon } from "@iconify/react"
+import { UserMenu } from "../containers/UserMenu";
 
 export default function ReownConnectButton() {
     const { open } = useAppKit();
     const { isConnected, address } = useAccount();
 
+    if (!isConnected) {
+        return (
+            <Button
+                variant={`navbar`}
+                className={`flex items-center gap-2`}
+                onClick={() => open()}
+            >
+                Login
+            </Button>
+        )
+    }
+
     return (
-        <Button
-            onClick={() => open()}
-            variant={`navbar`}
-            className={`flex items-center gap-2 ${isConnected ? "pl-5 pr-2" : ""}`}
-        >
-            {
-                isConnected
-                    ?
-                    <>
-                        <ConnectedContent address={address} />
-                    </>
-                    : "Login"
+        <UserMenu
+            trigger={
+                <Button
+                    variant={`navbar`}
+                    className={`flex items-center gap-2 pl-5 pr-2`}
+                >
+                    <ConnectedContent address={address} />
+                </Button>
             }
-        </Button>
+        />
     )
 }
 
@@ -45,7 +54,7 @@ function ConnectedContent({ address }: { address: `0x${string}` | undefined }) {
                     isLoading ?
                         <Skeleton className="h-3 w-24 bg-gray-300 opacity-20" /> :
                         <>
-                            <Icon icon="cryptocurrency:eth" className="text-neutral-800"/>
+                            <Icon icon="cryptocurrency:eth" className="text-neutral-800" />
                             <p>{formatData(data)}</p>
                         </>
                 }
