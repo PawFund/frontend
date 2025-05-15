@@ -1,8 +1,19 @@
+"use client"
+
 import Image from "next/image";
 import { iconsAssets } from "@/assets";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { PATH_HIDES_HEADER_FOOTER as hidePathName} from "@/lib/constants";
 
 export default function Footer() {
+    const pathname = usePathname();
+    const isHidden = hidePathName.includes(pathname);
+
+    if(isHidden){
+        return null;
+    }
+
     return (
         <footer className="w-full bg-primary mt-10">
             <div className="flex flex-col sm:flex-row justify-between gap-6 max-w-7xl mx-auto px-4 lg:px-8 py-8 md:py-10 relative">

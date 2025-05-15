@@ -23,12 +23,12 @@ export const metadata: Metadata = {
 	description: "Paw Fund is a fundraising platform for animal welfare organizations.",
 };
 
+
 export default async function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-
 	const headersObj = await headers();
 	const cookies = headersObj.get('cookie')
 

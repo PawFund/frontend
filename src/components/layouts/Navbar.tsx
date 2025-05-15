@@ -7,10 +7,16 @@ import { Search} from "lucide-react";
 import ReownConnectButton from "../ui/ReownConnectButton";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { PATH_HIDES_HEADER_FOOTER as hidePathName} from "@/lib/constants";
 
 export default function Navbar() {
     const pathname = usePathname();
     const isHomePage = pathname === "/";
+    const isHidden = hidePathName.includes(pathname);
+
+    if(isHidden){
+        return null;
+    }
 
     return (
         <header
