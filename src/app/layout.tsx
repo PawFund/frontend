@@ -5,6 +5,7 @@ import { headers } from "next/headers";
 import Web3Provider from "./Web3Provider";
 import "./globals.css";
 import Footer from "@/components/layouts/Footer";
+import { Toaster } from "@/components/ui/sonner";
 
 const BagelFatOne = Bagel_Fat_One({
 	variable: "--font-bagel-fat-one",
@@ -41,8 +42,22 @@ export default async function RootLayout({
 					<main className="max-w-7xl mx-auto px-4 lg:px-8">
 						{children}
 					</main>
-					<Footer/>
+					<Footer />
 				</Web3Provider>
+				<Toaster
+					toastOptions={{
+						className: "!rounded-2xl !border-gray-300",
+						classNames: {
+							default: "!bg-gray-200",
+							title: '!font-semibold !text-neutral-800',
+							description: '!text-neutral-700',
+							success: '!text-green-500',
+							error: '!text-red-500',
+							warning: '!text-yellow-500',
+							info: '!text-blue-500',
+						}
+					}}
+				/>
 			</body>
 		</html>
 	);

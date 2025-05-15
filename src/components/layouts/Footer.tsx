@@ -9,7 +9,7 @@ export default function Footer() {
                 <div className="flex flex-col gap-4">
                     <Image src={iconsAssets.PawIconWhite} alt="paw icon" className="md:absolute left-1/2 md:-translate-x-1/2 top-1/2 md:-translate-y-1/2 transform" />
                     <Link href={"/"}>
-                        <Image src={"logo-white.svg"} alt="Paw Fund Logo" width={160} height={50} />
+                        <Image src={"/logo-white.svg"} alt="Paw Fund Logo" width={160} height={50} />
                     </Link>
                     <p className="text-white flex items-center gap-1 text-nowrap">
                         Made With
