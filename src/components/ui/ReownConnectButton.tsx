@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useAppKit } from "@reown/appkit/react";
 import { useAccount, useBalance } from "wagmi";
 import { type GetBalanceData, } from 'wagmi/query'
-import { baseSepolia } from "@reown/appkit/networks";
+import { base } from "viem/chains";
 import { formatUnits } from 'viem'
 import { Skeleton } from "@/components/ui/skeleton";
 import { truncateAddress } from "@/lib/utils";
@@ -44,7 +44,7 @@ export default function ReownConnectButton() {
 function ConnectedContent({ address }: { address: `0x${string}` | undefined }) {
     const { data, isLoading } = useBalance({
         address: address,
-        chainId: baseSepolia.id,
+        chainId: base.id,
     })
 
     return (

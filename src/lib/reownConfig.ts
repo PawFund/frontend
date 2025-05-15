@@ -1,6 +1,6 @@
 import { cookieStorage, createStorage, Storage } from "@wagmi/core";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
-import { mainnet, sepolia, baseSepolia } from "@reown/appkit/networks";
+import { mainnet, sepolia, baseSepolia, base } from "@reown/appkit/networks";
 import { type Config } from "wagmi";
 import { createAppKit, type Metadata } from "@reown/appkit/react";
 
@@ -18,7 +18,7 @@ const metadata: Metadata = {
     icons: ["https://assets.reown.com/reown-profile-pic.png"],
 };
 
-export const networks = [mainnet, sepolia, baseSepolia];
+export const networks = [mainnet, sepolia, baseSepolia, base];
 
 export const wagmiAdapter = new WagmiAdapter({
     storage: createStorage({
@@ -32,8 +32,8 @@ export const wagmiAdapter = new WagmiAdapter({
 createAppKit({
     adapters: [wagmiAdapter],
     projectId,
-    networks: [baseSepolia],
-    defaultNetwork: baseSepolia,
+    networks: [base],
+    defaultNetwork: base,
     metadata: metadata,
     features: {
         analytics: true,
