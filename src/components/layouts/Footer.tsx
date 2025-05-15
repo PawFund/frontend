@@ -8,7 +8,9 @@ export default function Footer() {
             <div className="flex flex-col sm:flex-row justify-between gap-6 max-w-7xl mx-auto px-4 lg:px-8 py-8 md:py-10 relative">
                 <div className="flex flex-col gap-4">
                     <Image src={iconsAssets.PawIconWhite} alt="paw icon" className="md:absolute left-1/2 md:-translate-x-1/2 top-1/2 md:-translate-y-1/2 transform" />
-                    <Image src={"logo-white.svg"} alt="Paw Fund Logo" width={160} height={50} />
+                    <Link href={"/"}>
+                        <Image src={"logo-white.svg"} alt="Paw Fund Logo" width={160} height={50} />
+                    </Link>
                     <p className="text-white flex items-center gap-1 text-nowrap">
                         Made With
                         <span>
