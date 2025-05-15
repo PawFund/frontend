@@ -70,6 +70,6 @@ function formatData(data: GetBalanceData | undefined) {
     if (!data) return "0.00 ETH";
     if (data) {
         const formattedValue = formatUnits(data.value, data.decimals);
-        return `${Number(formattedValue).toFixed(3)} ${data.symbol}`;
+        return `${Number(formattedValue).toFixed(2)} ${data.symbol}`;
     }
 }

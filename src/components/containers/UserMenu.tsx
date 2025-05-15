@@ -1,11 +1,15 @@
+"use client"
+
 import { useAppKit } from "@reown/appkit/react";
 import { useDisconnect } from "wagmi";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { HeartHandshake, LogOut, Plus, User, Wallet } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export function UserMenu({ open, onOpenChange, trigger }: { open?: boolean, onOpenChange?: (open: boolean) => void, trigger?: React.ReactNode }) {
     const { disconnect } = useDisconnect();
     const appKit = useAppKit();
+    const router = useRouter();
 
     return (
         <DropdownMenu open={open} onOpenChange={onOpenChange}>
@@ -13,16 +17,16 @@ export function UserMenu({ open, onOpenChange, trigger }: { open?: boolean, onOp
                 {trigger}
             </DropdownMenuTrigger>
             <DropdownMenuContent className=" bg-gray-100 rounded-xl w-60 top-7">
-                <DropdownMenuItem >
+                <DropdownMenuItem onClick={() => router.push('/create-campaign')}>
                     <div className="py-3 w-full border border-gray-300 flex items-center justify-center gap-2 rounded-lg cursor-pointer hover:bg-gray-200 transition-all">
                         <Plus className="text-neutral-800" strokeWidth={2} />
                         <span>Create Campaign</span>
                     </div>
                 </DropdownMenuItem>
-                <DropdownMenuItem >
+                <DropdownMenuItem onClick={() => router.push('/profile')}>
                     <div className="text-base flex items-center gap-2 cursor-pointer hover:bg-gray-200 px-4 py-2 transition-all w-full rounded-md">
                         <User className="text-neutral-800" strokeWidth={2} />
-                        <span>Account</span>
+                        <span>Profile</span>
                     </div>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => appKit.open()}>
