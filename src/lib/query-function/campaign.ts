@@ -33,3 +33,17 @@ export const getCampaignById = async (campaignId: string) => {
     const data = await response.json();
     return data;
 }
+
+export const createCampaign = async (formData: FormData) => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_ENDPOINT_PROD}/campaigns/createCampaign`, {
+        method: "POST",
+        body: formData,
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to create campaign");
+    }
+
+    const data = await response.json();
+    return data;
+}

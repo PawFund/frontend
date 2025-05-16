@@ -194,3 +194,37 @@ export const contractABI = [
         type: "function",
     },
 ];
+
+export const factoryAddress = "0x29AFB3d2448ddaa0e039536002234a90aF1e4f31";
+
+export const factoryABI = [
+    {
+        inputs: [
+            { internalType: "uint256", name: "_goalAmount", type: "uint256" },
+            { internalType: "uint256", name: "_minDonation", type: "uint256" },
+        ],
+        name: "createCampaign",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+        name: "deployedCampaigns",
+        outputs: [{ internalType: "address", name: "", type: "address" }],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "getDeployedCampaigns",
+        outputs: [{ internalType: "address[]", name: "", type: "address[]" }],
+        stateMutability: "view",
+        type: "function",
+    },
+];
+
+export const contractFactory = {
+    abi: factoryABI,
+    address: factoryAddress as `0x${string}`,
+};
