@@ -1,0 +1,11 @@
+import { clsx, type ClassValue } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+
+export function truncateAddress(address: string | `0x${string}` | undefined, start: number = 6, end: number = 4) {
+  if (!address) return ""
+  return `${address.slice(0, start)}...${address.slice(-end)}`
+}
