@@ -1,34 +1,102 @@
+"use client"
+
 import Image from "next/image";
 import { imageAssets } from "@/assets";
-import { Telescope } from "lucide-react";
+import { LoaderCircle, Telescope } from "lucide-react";
 import Link from "next/link";
 import { truncateAddress } from "@/lib/utils";
 import DonationFill from "@/components/containers/DonationFill";
 import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import { getCampaignById } from "@/lib/query-function/campaign";
+import { useEffect, use, useState } from "react";
+import { useReadContracts } from "wagmi";
+import { contractABI } from "@/lib/constants";
+import { CampaignReturnType } from "@/lib/query-function/campaign";
+import { formatEther } from "viem";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getUserByAddress } from "@/lib/query-function/user";
+
+export default function CampaignPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = use(params);
+
+    const [contract, setContract] = useState<{ address: `0x${string}`, abi: typeof contractABI }>()
+
+    const getCampaign = useQuery({
+        queryKey: [`get-campaign-${id}`],
+        queryFn: () => getCampaignById(id),
+    })
+
+    useEffect(() => {
+        if (getCampaign.data) {
+            setContract({
+                address: getCampaign.data.contractAddress,
+                abi: contractABI,
+            })
+        }
+    }, [getCampaign.data])
 
 
-const mockData = {
-    desc: "This campaign aims to address the overpopulation of stray cats by organizing a spay and neuter program. Overpopulation of stray cats is a significant issue that leads to various challenges, including the spread of diseases, competition for limited resources, and the suffering of animals due to lack of proper care. By spaying and neutering stray cats, we can prevent the birth of countless unwanted kittens, reduce the strain on animal shelters, and improve the overall well-being of these animals. The funds raised through this campaign will be used to cover the costs of veterinary procedures, post-operative care, and outreach efforts to educate the community about the importance of controlling the stray cat population. Every contribution, no matter how small, will make a meaningful difference in the lives of these animals and the communities they inhabit. Our team is committed to transparency and accountability. All transactions and fund allocations will be publicly accessible on the blockchain, ensuring that every donor can track how their contributions are being utilized. Together, we can create a sustainable solution to the stray cat overpopulation problem and make a positive impact on animal welfare. Join us in this mission to give stray cats a better future. Your support will help us take a step closer to a world where every animal is treated with compassion and care. Thank you for being a part of this important cause."
-}
+    const getDataContract = useReadContracts({
+        contracts: [
+            {
+                ...contract,
+                functionName: "goalAmount",
+            },
+            {
+                ...contract,
+                functionName: "totalDonated",
+            },
+            {
+                ...contract,
+                functionName: "owner",
+            },
+        ],
+    });
 
-export default function CampaignPage() {
+    useEffect(() => {
+        if (!getCampaign.isRefetching) {
+            getDataContract.refetch();
+        }
+    }, [getCampaign.isRefetching]);
+
+
+    if (getCampaign.isPending || getDataContract.isPending) {
+        return (
+            <div className="flex items-center justify-center h-dvh">
+                <LoaderCircle
+                    className="animate-spin text-primary"
+                    size={62}
+                    strokeWidth={2}
+                />
+            </div>
+        )
+    }
+
+    const campaignData: CampaignReturnType = getCampaign.data;
+    const owner = getDataContract.data?.[2].result as `0x${string}`;
+    const goalAmount = getDataContract.data?.[0].result as bigint || BigInt(0);
+    const totalDonated = getDataContract.data?.[1].result as bigint || BigInt(0);
+
     return (
         <>
             <h1 className="mt-6 text-3xl font-bold">
-                Spay & Neuter Stray Cats to Prevent Overpopulation
+                {campaignData.name}
             </h1>
             <div className="grid grid-cols-7 gap-6 mt-6">
                 <section className="col-span-4 flex flex-col gap-4">
                     <Image
-                        src={imageAssets.StrayCatsPlaceholder}
+                        src={campaignData.image}
                         className="aspect-video object-cover rounded-2xl"
                         alt="Campaign Image"
+                        width={1000}
+                        height={800}
                     />
                     <div className="flex justify-between items-center">
-                        <p className="text-gray-500">0xf436a2443eb5Dc420C2405399f42914A0DbD8AAA</p>
+                        <p className="text-gray-500">{campaignData.contractAddress}</p>
                         <Link
                             className="flex items-center gap-2"
-                            href={`https://etherscan.io/address/0xf436a2443eb5Dc420C2405399f42914A0DbD8AAA`}
+                            href={`https://basescan.org/address/${campaignData.contractAddress}`}
                             target="_blank"
                         >
                             <Telescope size={18} />
@@ -37,38 +105,72 @@ export default function CampaignPage() {
                             </p>
                         </Link>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <Image
-                            src={imageAssets.LogoPlaceholder}
-                            alt="Fundraiser Image"
-                            className="w-12 aspect-square rounded-full object-cover"
-                        />
-                        <div>
-                            <h6 className="font-medium">Animal Shell PWT</h6>
-                            <Link
-                                href={`https://etherscan.io/address/0xf436a2443eb5Dc420C2405399f42914A0DbD8AAA`}
-                                target="_blank"
-                                className="text-sm text-gray-500 underline"
-                            >
-                                {truncateAddress("0xf436a2443eb5Dc420C2405399f42914A0DbD8AAA")}
-                            </Link>
-                        </div>
-                    </div>
-                    <p>{mockData.desc}</p>
-                    <div>
+                    <Owner address={owner} />
+                    <p>{campaignData.description}</p>
+                    {/* <div>
                         <h4 className="font-semibold">Withdrawal History</h4>
-                        <WithdrawalCard/>
-                        <WithdrawalCard/>
-                    </div>
+                        <WithdrawalCard />
+                        <WithdrawalCard />
+                    </div> */}
                 </section>
                 <aside className="col-span-3 relative">
-                    <DonationFill className="sticky top-32" />
+                    <DonationFill campaignId={id} contractAddress={campaignData.contractAddress} goal={Number(formatEther(goalAmount))} raised={Number(formatEther(totalDonated))} className="sticky top-32" />
                 </aside>
             </div>
         </>
     );
 }
 
+function Owner({ address }: { address: string }) {
+    const { data: ownerData, isPending, isError, error } = useQuery({
+        queryKey: ["getUserByAddress"],
+        queryFn: () => getUserByAddress(address),
+    })
+
+    console.log("Address ", address);
+    console.log("Error ", error);
+    console.log({ ownerData });
+
+    return (
+        <div className="flex items-center gap-2">
+            {
+                isPending ? (
+                    <Skeleton className="w-12 aspect-square rounded-full bg-gray-200" />
+                ) : (
+                    <Image
+                        src={ownerData?.image || imageAssets.LogoPlaceholder}
+                        alt="Fundraiser Image"
+                        className="w-12 aspect-square rounded-full object-cover"
+                        width={80}
+                        height={80}
+                    />
+                )
+            }
+            <div>
+                {
+                    isPending ? (
+                        <>
+                            <Skeleton className="w-24 h-4 rounded-full bg-gray-200" />
+                            <Skeleton className="w-20 h-3 rounded-full bg-gray-200 mt-2" />
+                        </>
+                    ) : (
+                        <>
+                            <h6 className="font-medium">{ownerData?.name}</h6>
+                            <Link
+                                href={`https://basescan.org/address/${address}`}
+                                target="_blank"
+                                className="text-sm text-gray-500 underline"
+                            >
+                                {truncateAddress(address)}
+                            </Link>
+                        </>
+                    )
+                }
+
+            </div>
+        </div>
+    )
+}
 
 function WithdrawalCard() {
     return (

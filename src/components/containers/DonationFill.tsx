@@ -3,21 +3,27 @@
 import { cn } from "@/lib/utils";
 import { Icon } from "@iconify/react";
 import { Progress } from "@/components/ui/progress";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import { Calendar, Goal, HandHelping, Heart, HeartHandshake, Share2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
 import Link from "next/link";
+import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
+import { contractABI } from "@/lib/constants";
+import { parseEther } from "viem";
+import { base } from "viem/chains";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAccount } from "wagmi";
 
 type DonationFillProps = {
     className?: string;
-    goal?: number;
-    raised?: number;
+    goal: number;
+    raised: number;
     donations?: number;
     daysLeft?: number;
+    contractAddress: string;
+    campaignId?: string;
 };
 
 const amountSelectValues = [
@@ -29,6 +35,70 @@ const amountSelectValues = [
 
 export default function DonationFill(props: DonationFillProps) {
     const [donationAmount, setDonationAmount] = useState("");
+    const percentageRaised = (props.raised / props.goal) * 100;
+    const { isConnected } = useAccount();
+
+    const queryClient = useQueryClient();
+    const { writeContract, isPending: pendingSign, data: txHash } = useWriteContract()
+    const { isLoading: loadingTx, isSuccess: successTx, isError, error: errorTx } = useWaitForTransactionReceipt({
+        chainId: base.id,
+        hash: txHash,
+    })
+
+    useEffect(() => {
+        if (txHash && loadingTx) {
+            toast.loading("Processing Donation", {
+                id: "donate-loading",
+                description: () => (
+                    <div className="flex flex-col text-sm">
+                        <p>Your donation is being processed on the blockchain. This may take a few moments to complete.</p>
+                        <Link
+                            href={`https://basescan.org/tx/${txHash}`}
+                            target="_blank"
+                            className="text-amber-600 underline"
+                        >
+                            View on Explorer
+                        </Link>
+                    </div>
+                ),
+            });
+        }
+    }, [txHash, loadingTx]);
+
+    useEffect(() => {
+        if (successTx) {
+            queryClient.invalidateQueries({ queryKey: [`get-campaign-${props.campaignId}`] })
+            toast.success("Donation Successful", {
+                id: "donate-loading",
+                duration: 3000,
+                description: () => (
+                    <div className="flex flex-col text-sm">
+                        <p>Your donation was successful! Thank you for your support.</p>
+                        <Link
+                            href={`https://basescan.org/tx/${txHash}`}
+                            target="_blank"
+                            className="text-amber-600 underline"
+                        >
+                            View on Explorer
+                        </Link>
+                    </div>
+                ),
+            });
+        }
+        if (isError) {
+            toast.dismiss("donate-loading");
+            toast.error("Transaction Failed", {
+                duration: 8000,
+                id: "donate-failed",
+                description: errorTx?.message,
+                cancel: {
+                    label: 'close',
+                    onClick: () => console.log('Cancel clicked'),
+                },
+            });
+        }
+
+    }, [successTx, isError, errorTx])
 
     const handleDonationSelect = (value: string) => {
         setDonationAmount(value);
@@ -46,30 +116,24 @@ export default function DonationFill(props: DonationFillProps) {
             toast.error("Please fill in the amount of donation you wish to donate.");
             return;
         }
+        if (!isConnected) {
+            toast.error("Please Login with your wallet to donate.");
+            return;
+        }
 
-        return
-        toast.loading("Processing Donation", {
-            dismissible: false,
-            duration: Infinity,
-            id: "donate-loading",
-            description: () => (
-                <div className="flex flex-col text-sm">
-                    <p>Your donation is being processed on the blockchain. This may take a few moments to complete.</p>
-                    <Link
-                        href={`https://etherscan.io/tx/${"0xf436a2443eb5Dc420C2405399f42914A0DbD8AAA"}`}
-                        target="_blank"
-                        className="text-amber-600 underline"
-                    >
-                        View on Explorer
-                    </Link>
-                </div>
-            ),
-        });
+        writeContract({
+            abi: contractABI,
+            address: props.contractAddress as `0x${string}`,
+            functionName: "donate",
+            value: parseEther(donationAmount)
+        })
     }
 
     const handleShare = () => {
-
-
+        navigator.clipboard.writeText(window.location.href);
+        toast.success("Link copied to clipboard!", {
+            description: "Share this link with your friends and family to support the cause.",
+        });
     }
 
     return (
@@ -87,29 +151,30 @@ export default function DonationFill(props: DonationFillProps) {
                     height="28"
                 />
                 <h3 className="font-medium text-2xl">
-                    <strong>{1.43}</strong> ETH Raised
+                    <strong>{props.raised}</strong> ETH Raised
                 </h3>
             </div>
             <div className="flex items-center gap-2">
                 <Progress
                     fgClassName="bg-green-500"
+                    className="h-3"
                     bgClassName="bg-gray-200"
-                    value={30}
+                    value={percentageRaised}
                 />
-                <p className="font-medium">30%</p>
+                <p className="font-medium">{percentageRaised.toFixed(1)}%</p>
             </div>
             <div className="flex gap-4 items-center text-sm">
                 <div className="flex items-center gap-2">
                     <Goal size={16} />
-                    <p>{5} ETH Goal</p>
+                    <p>{props.goal} ETH Goal</p>
                 </div>
-                <div className="flex items-center gap-2">
+                {/* <div className="flex items-center gap-2">
                     <Heart size={16} />
                     <p>{100} Donations</p>
-                </div>
+                </div> */}
                 <div className="flex items-center gap-2">
                     <Calendar size={15} strokeWidth={1.5} />
-                    <p>{20} Days Left</p>
+                    <p>Not Specified</p>
                 </div>
             </div>
             <div className="flex flex-col gap-2">
@@ -117,7 +182,7 @@ export default function DonationFill(props: DonationFillProps) {
                 <div className="flex gap-2">
                     {amountSelectValues.map((item) => (
                         <button
-                            // disabled
+                            disabled={pendingSign}
                             onClick={() => handleDonationSelect(item.value)}
                             key={item.id}
                             className={`flex items-center text-sm px-4 h-11 border border-gray-300 w-full rounded-full shadow-xs justify-center cursor-pointer ${donationAmount === item.value ? "ring-1 ring-gray-400" : ""}`}
@@ -134,6 +199,7 @@ export default function DonationFill(props: DonationFillProps) {
                         className="absolute top-1/2 left-5 transform -translate-y-1/2 text-neutral-700"
                     />
                     <Input
+                        disabled={pendingSign}
                         onChange={handleDonationInput}
                         value={donationAmount}
                         type="text"
@@ -143,7 +209,7 @@ export default function DonationFill(props: DonationFillProps) {
                     />
                 </div>
                 <div className="mt-4">
-                    <Button onClick={handleDonate} className="w-full flex items-center justify-center gap-3">
+                    <Button disabled={pendingSign} onClick={handleDonate} className="w-full flex items-center justify-center gap-3">
                         <HeartHandshake className="size-5" strokeWidth={2} />
                         Donate
                     </Button>

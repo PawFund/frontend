@@ -47,12 +47,14 @@ export default function CampaignCard(props: CampaignCardProps) {
 
     const [goalAmount, totalDonated] = getDataContract.data || [];
     const [raisedPercentage, setRaisedPercentage] = useState(0);
+    const goal = goalAmount?.result as bigint || BigInt(0);
+    const recived = totalDonated?.result as bigint || BigInt(0);
 
     useEffect(() => {
         if (goalAmount?.result && totalDonated?.result) {
             const percentage =
-                (Number(formatEther(totalDonated?.result as bigint)) /
-                    Number(formatEther(goalAmount?.result as bigint))) *
+                (Number(formatEther(recived)) /
+                    Number(formatEther(goal))) *
                 100;
             setRaisedPercentage(percentage);
         }
@@ -92,8 +94,8 @@ export default function CampaignCard(props: CampaignCardProps) {
                 ) : (
                     <p className="font-semibold text-sm">
                         {Number(
-                            formatEther(totalDonated?.result as bigint)
-                        ).toFixed(2)}{" "}
+                            formatEther(recived)
+                        ).toFixed(5)}{" "}
                         ETH Raised
                     </p>
                 )}
@@ -107,7 +109,7 @@ export default function CampaignCard(props: CampaignCardProps) {
                             value={raisedPercentage}
                         />
                         <p className="font-bold text-xs">
-                            {raisedPercentage.toFixed(0)}%
+                            {raisedPercentage.toFixed(1)}%
                         </p>
                     </div>
                 )}
@@ -122,7 +124,7 @@ export default function CampaignCard(props: CampaignCardProps) {
                             <Skeleton className="h-3 w-20 bg-gray-300 opacity-20" />
                         ) : (
                             <p>
-                                {formatEther(goalAmount?.result as bigint)} ETH
+                                {formatEther(goal)} ETH
                                 Goal
                             </p>
                         )}
