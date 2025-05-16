@@ -21,11 +21,6 @@ export default function ProfilePage() {
     const router = useRouter();
     const { isConnected, address } = useAccount();
 
-    if (!isConnected) {
-        router.back();
-        return null;
-    }
-
     const [inputValues, setInputValues] = useState<FormProps>({
         name: "",
         email: "",
@@ -200,6 +195,11 @@ export default function ProfilePage() {
 
     const handleBack = () => {
         router.back();
+    }
+
+    if (!isConnected) {
+        router.back();
+        return null;
     }
 
     return (

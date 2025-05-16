@@ -246,7 +246,7 @@ export default function CreateCampaign() {
                         Campaign Name
                     </h3>
                     <p>
-                        Choose a name that reflects your campaign's purpose. This is how people will identify your cause, so make it memorable and meaningful.
+                        {"Choose a name that reflects your campaign's purpose. This is how people will identify your cause, so make it memorable and meaningful."}
                     </p>
                     <Input
                         onChange={handleInputChange}
@@ -263,7 +263,7 @@ export default function CreateCampaign() {
                         Description
                     </h3>
                     <p>
-                        Write a compelling description that explains your campaign's mission, goals, and impact. Share your story and connect with potential supporters on an emotional level.
+                        {"Write a compelling description that explains your campaign's mission, goals, and impact. Share your story and connect with potential supporters on an emotional level."}
                     </p>
                     <Textarea
                         onChange={handleInputChange}

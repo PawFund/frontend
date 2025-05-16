@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import { Icon } from "@iconify/react";
 import { Progress } from "@/components/ui/progress";
-import { Calendar, Goal, HandHelping, Heart, HeartHandshake, Share2 } from "lucide-react";
+import { Calendar, Goal, HeartHandshake, Share2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";

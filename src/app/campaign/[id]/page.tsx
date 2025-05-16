@@ -6,7 +6,7 @@ import { LoaderCircle, Telescope } from "lucide-react";
 import Link from "next/link";
 import { truncateAddress } from "@/lib/utils";
 import DonationFill from "@/components/containers/DonationFill";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { getCampaignById } from "@/lib/query-function/campaign";
 import { useEffect, use, useState } from "react";
@@ -58,7 +58,7 @@ export default function CampaignPage({ params }: { params: Promise<{ id: string 
         if (!getCampaign.isRefetching) {
             getDataContract.refetch();
         }
-    }, [getCampaign.isRefetching]);
+    }, [getCampaign.isRefetching, getDataContract]);
 
 
     if (getCampaign.isPending || getDataContract.isPending) {
@@ -122,7 +122,7 @@ export default function CampaignPage({ params }: { params: Promise<{ id: string 
 }
 
 function Owner({ address }: { address: string }) {
-    const { data: ownerData, isPending, isError, error } = useQuery({
+    const { data: ownerData, isPending, error } = useQuery({
         queryKey: ["getUserByAddress"],
         queryFn: () => getUserByAddress(address),
     })
@@ -172,25 +172,25 @@ function Owner({ address }: { address: string }) {
     )
 }
 
-function WithdrawalCard() {
-    return (
-        <div className="flex flex-col gap-2 mt-2 bg-gray-100 p-6 rounded-xl">
-            <p className="font-medium">First spaying treatment for 100 total cats</p>
-            <div>
-                <p className="text-sm">Total Withdrawn</p>
-                <p>0.01 ETH</p>
-            </div>
-            <div>
-                <p className="text-sm">Drawn to</p>
-                <p className="font-medium text-sm">Soedirjo Animal Hospital</p>
-                <p className="text-sm text-gray-600">0xF9FcD098320F9AeAe0670cc73A232974cEd11b72</p>
-            </div>
-            <div>
-                <p className="text-sm">Status</p>
-                {/* <p className="font-medium text-sm bg-green-100 text-green-600 px-4 py-1 rounded-full w-fit mt-1">Completed</p> */}
-                <p className="font-medium text-sm bg-yellow-100 text-yellow-600 px-4 py-1 rounded-full w-fit mt-1">Waiting Approval</p>
-            </div>
-            <Button variant={"outline"} className="mt-2 h-12 text-sm">Approve Request</Button>
-        </div>
-    )
-}
+// function WithdrawalCard() {
+//     return (
+//         <div className="flex flex-col gap-2 mt-2 bg-gray-100 p-6 rounded-xl">
+//             <p className="font-medium">First spaying treatment for 100 total cats</p>
+//             <div>
+//                 <p className="text-sm">Total Withdrawn</p>
+//                 <p>0.01 ETH</p>
+//             </div>
+//             <div>
+//                 <p className="text-sm">Drawn to</p>
+//                 <p className="font-medium text-sm">Soedirjo Animal Hospital</p>
+//                 <p className="text-sm text-gray-600">0xF9FcD098320F9AeAe0670cc73A232974cEd11b72</p>
+//             </div>
+//             <div>
+//                 <p className="text-sm">Status</p>
+//                 {/* <p className="font-medium text-sm bg-green-100 text-green-600 px-4 py-1 rounded-full w-fit mt-1">Completed</p> */}
+//                 <p className="font-medium text-sm bg-yellow-100 text-yellow-600 px-4 py-1 rounded-full w-fit mt-1">Waiting Approval</p>
+//             </div>
+//             <Button variant={"outline"} className="mt-2 h-12 text-sm">Approve Request</Button>
+//         </div>
+//     )
+// }
