@@ -14,8 +14,8 @@ const metadata: Metadata = {
     name: "Paw Fund",
     description:
         "Paw Fund is a fundraising platform for animal welfare organizations.",
-    url: "https://pawfund.vercel.app",
-    icons: ["https://assets.reown.com/reown-profile-pic.png"],
+    url: "https://pawfunding.vercel.app",
+    icons: ["https://raw.githubusercontent.com/PawFund/frontend/79d0f5ab18545663f5ea20098dbf7dc47ead9332/public/pawfund.svg"],
 };
 
 export const networks = [mainnet, sepolia, baseSepolia, base];
