@@ -35,7 +35,7 @@ export function UserMenu({ open, onOpenChange, trigger }: { open?: boolean, onOp
                         <span>My Wallet</span>
                     </div>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => router.push('/my-campaign')} >
                     <div className="text-base flex items-center gap-2 cursor-pointer hover:bg-gray-200 px-4 py-2 transition-all w-full rounded-md">
                         <HeartHandshake className="text-neutral-800" strokeWidth={2} />
                         <span>My Campaign</span>
