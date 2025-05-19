@@ -19,16 +19,22 @@ if (!alchemyApiKey) {
     throw new Error("Alchemy API Key is not defined");
 }
 
+let projectURL: string;
+if (process.env.NEXT_PUBLIC_ENVIRONMENT === "PROD") {
+    projectURL = process.env.NEXT_PUBLIC_PROJECT_PRODUCTION_URL as string;
+} else {
+    projectURL = process.env.NEXT_PUBLIC_PROJECT_DEVELOPMENT_URL as string;
+}
+
 const metadata: Metadata = {
     name: "Paw Fund",
     description:
         "Paw Fund is a fundraising platform for animal welfare organizations.",
-    url: "https://pawfunding.vercel.app",
+    url: projectURL,
     icons: [
         "https://raw.githubusercontent.com/PawFund/frontend/79d0f5ab18545663f5ea20098dbf7dc47ead9332/public/pawfund.svg",
     ],
 };
-
 
 export const networks = [mainnet, sepolia, baseSepolia, base];
 export const defaultNetwork = base;
@@ -40,10 +46,10 @@ const wagmiAdapter = new WagmiAdapter({
     ssr: true,
     projectId,
     networks: [defaultNetwork],
-    chains:[defaultNetwork],
+    chains: [defaultNetwork],
     transports: {
         [defaultNetwork.id]: http(
-            `https://base-mainnet.g.alchemy.com/v2/${alchemyApiKey}`,
+            `https://base-mainnet.g.alchemy.com/v2/${alchemyApiKey}`
         ),
     },
 });

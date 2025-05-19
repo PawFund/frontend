@@ -63,7 +63,7 @@ export const getCampaignById = async (campaignId: string) => {
 
 export const createCampaign = async (formData: FormData) => {
     const response = await fetch(
-        `${process.env.NEXT_PUBLIC_ENDPOINT_PROD}/campaigns/createCampaign`,
+        `${process.env.API_ENDPOINT}/campaigns/createCampaign`,
         {
             method: "POST",
             body: formData,
