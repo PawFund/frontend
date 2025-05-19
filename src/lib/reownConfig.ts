@@ -1,13 +1,22 @@
-import { cookieStorage, createStorage, Storage } from "@wagmi/core";
+import {
+    cookieStorage,
+    createStorage,
+    http,
+    type Storage,
+    type Config,
+} from "wagmi";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 import { mainnet, sepolia, baseSepolia, base } from "@reown/appkit/networks";
-import { type Config } from "wagmi";
 import { createAppKit, type Metadata } from "@reown/appkit/react";
 
-export const projectId = process.env.NEXT_PUBLIC_REOWN_PROJECT_ID || "";
+const projectId = process.env.NEXT_PUBLIC_REOWN_PROJECT_ID as string;
+const alchemyApiKey = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY as string;
 
 if (!projectId) {
     throw new Error("Project ID is not defined");
+}
+if (!alchemyApiKey) {
+    throw new Error("Alchemy API Key is not defined");
 }
 
 const metadata: Metadata = {
@@ -15,25 +24,35 @@ const metadata: Metadata = {
     description:
         "Paw Fund is a fundraising platform for animal welfare organizations.",
     url: "https://pawfunding.vercel.app",
-    icons: ["https://raw.githubusercontent.com/PawFund/frontend/79d0f5ab18545663f5ea20098dbf7dc47ead9332/public/pawfund.svg"],
+    icons: [
+        "https://raw.githubusercontent.com/PawFund/frontend/79d0f5ab18545663f5ea20098dbf7dc47ead9332/public/pawfund.svg",
+    ],
 };
 
-export const networks = [mainnet, sepolia, baseSepolia, base];
 
-export const wagmiAdapter = new WagmiAdapter({
+export const networks = [mainnet, sepolia, baseSepolia, base];
+export const defaultNetwork = base;
+
+const wagmiAdapter = new WagmiAdapter({
     storage: createStorage({
         storage: cookieStorage,
     }) as Storage,
     ssr: true,
     projectId,
-    networks,
+    networks: [defaultNetwork],
+    chains:[defaultNetwork],
+    transports: {
+        [defaultNetwork.id]: http(
+            `https://base-mainnet.g.alchemy.com/v2/${alchemyApiKey}`,
+        ),
+    },
 });
 
 createAppKit({
     adapters: [wagmiAdapter],
     projectId,
-    networks: [base],
-    defaultNetwork: base,
+    networks: [defaultNetwork],
+    defaultNetwork: defaultNetwork,
     metadata: metadata,
     features: {
         analytics: true,
@@ -44,8 +63,6 @@ createAppKit({
         "--w3m-border-radius-master": "4px",
         "--w3m-accent": "#F59E0B",
         "--w3m-font-size-master": "9px",
-        // "--w3m-color-mix": "#6366f1",
-        // "--w3m-color-mix-strength": 25,
     },
 });
 

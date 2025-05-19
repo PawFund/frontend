@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Bagel_Fat_One, Space_Grotesk } from "next/font/google";
-import Navbar from "@/components/layouts/Navbar";
+import Navbar from "@/components/layouts/common/Navbar";
 import { headers } from "next/headers";
 import Web3Provider from "./Web3Provider";
 import "./globals.css";
-import Footer from "@/components/layouts/Footer";
+import Footer from "@/components/layouts/common/Footer";
 import { Toaster } from "@/components/ui/sonner";
 
 const BagelFatOne = Bagel_Fat_One({
@@ -19,8 +19,34 @@ const SpaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-	title: "Paw Fund | Fundraising for Animal Welfare",
-	description: "Paw Fund is a fundraising platform for animal welfare organizations.",
+	title: "Paw Fund | Web3 Animal Welfare Fundraising Platform",
+	description: "Support animal shelters and rescue operations through transparent blockchain donations. Join Paw Fund's decentralized platform for animal welfare projects.",
+	keywords: "animal welfare, blockchain donations, cryptocurrency, pet rescue, animal shelter, Web3 charity, transparent fundraising",
+	openGraph: {
+		title: "Paw Fund | Web3 Animal Welfare Fundraising Platform",
+		description: "Support animal shelters and rescue operations through transparent blockchain donations",
+		type: "website",
+		url: "https://pawfunding.vercel.app",
+		siteName: "Paw Fund",
+		images: [
+			{
+				url: "/assets/og-image.png",
+				width: 1200,
+				height: 630,
+				alt: "Paw Fund Platform",
+			},
+		],
+	},
+	twitter: {
+		card: "summary_large_image",
+		title: "Paw Fund | Web3 Animal Welfare Fundraising Platform",
+		description: "Support animal shelters through transparent blockchain donations",
+		images: ["/assets/og-image.png"],
+	},
+	robots: {
+		index: true,
+		follow: true,
+	},
 };
 
 
@@ -34,30 +60,13 @@ export default async function RootLayout({
 
 	return (
 		<html lang="en">
-			<body className={
-				`${SpaceGrotesk.variable} ${BagelFatOne.variable} antialiased bg-[url(/bg-pattern.svg)] bg-repeat-space bg-size-[auto_26px]`
-			}>
+			<body
+				className={`${SpaceGrotesk.variable} ${BagelFatOne.variable} antialiased bg-[url(/assets/bg-pattern.svg)] bg-repeat-space bg-size-[auto_26px]`}
+			>
 				<Web3Provider cookies={cookies}>
-					<Navbar />
-					<main className="max-w-7xl mx-auto px-4 lg:px-8">
 						{children}
-					</main>
-					<Footer />
 				</Web3Provider>
-				<Toaster
-					toastOptions={{
-						className: "!rounded-2xl !border-gray-300",
-						classNames: {
-							default: "!bg-gray-200",
-							title: '!font-semibold !text-neutral-800',
-							description: '!text-neutral-700',
-							success: '!text-green-500',
-							error: '!text-red-500',
-							warning: '!text-yellow-500',
-							info: '!text-blue-500',
-						}
-					}}
-				/>
+				<Toaster />
 			</body>
 		</html>
 	);
