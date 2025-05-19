@@ -31,11 +31,11 @@ export default function LandingOngoingCampaigns() {
 
 async function Campaigns() {
     const campaignsData = await getAllCampaigns();
-    const campaigns = campaignsData.data.slice(0, 8);
+    const campaigns = campaignsData.data?.slice(0, 8);
     return (
         <>
             {
-                campaigns.map((campaign: Campaign) => (
+                campaigns?.map((campaign: Campaign) => (
                     <CampaignCard
                         key={campaign._id}
                         campaignId={campaign._id}
