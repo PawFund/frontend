@@ -16,6 +16,11 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     return {
         title: getCampaign.data?.name,
         description: getCampaign.data?.description,
+        openGraph: {
+            title: getCampaign.data?.name,
+            description: getCampaign.data?.description,
+            url: `https://pawfunding.vercel.app/campaign/${id}`,
+        },
     }
 }
 
