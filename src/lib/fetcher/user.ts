@@ -30,7 +30,8 @@ export const getUserByAddress = async (address: string) => {
             data: data[0],
         };
         return resSuccess;
-    } catch (error) {
+    } catch (err) {
+        console.log(err);
         throw new Error("Server Error: When trying to fetch user by address");
     }
 };

@@ -22,7 +22,8 @@ export const getAllCampaigns = async () => {
             data: data,
         };
         return resSuccess;
-    } catch (error) {
+    } catch (err) {
+        console.log(err);
         throw new Error("Server Error: When trying to fetch campaigns");
     }
 };
@@ -54,7 +55,8 @@ export const getCampaignById = async (campaignId: string) => {
             data: data,
         };
         return resSuccess;
-    } catch (error) {
+    } catch (err) {
+        console.log(err);
         throw new Error("Server Error: When trying to fetch campaign by ID");
     }
 };
