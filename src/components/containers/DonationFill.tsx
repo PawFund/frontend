@@ -9,21 +9,17 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
 import Link from "next/link";
-import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
+import { useReadContracts, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { contractABI } from "@/lib/constants";
-import { parseEther } from "viem";
+import { formatEther, parseEther } from "viem";
 import { base } from "viem/chains";
-import { useQueryClient } from "@tanstack/react-query";
 import { useAccount } from "wagmi";
+import { Skeleton } from "../ui/skeleton";
 
 type DonationFillProps = {
     className?: string;
-    goal: number;
-    raised: number;
-    donations?: number;
     daysLeft?: number;
     contractAddress: string;
-    campaignId?: string;
 };
 
 const amountSelectValues = [
@@ -34,11 +30,38 @@ const amountSelectValues = [
 ];
 
 export default function DonationFill(props: DonationFillProps) {
-    const [donationAmount, setDonationAmount] = useState("");
-    const percentageRaised = (props.raised / props.goal) * 100;
-    const { isConnected } = useAccount();
+    const contract = {
+        address: props.contractAddress as `0x${string}`,
+        abi: contractABI,
+    };
 
-    const queryClient = useQueryClient();
+    const [donationAmount, setDonationAmount] = useState("");
+    const { isConnected } = useAccount();
+    const getDataContract = useReadContracts({
+        contracts: [
+            {
+                ...contract,
+                functionName: "goalAmount",
+            },
+            {
+                ...contract,
+                functionName: "totalDonated",
+            },
+        ],
+    });
+    const goalAmount = Number(
+        formatEther(
+            getDataContract.data?.[0].result as bigint || BigInt(0)
+        )
+    )
+    const totalDonated = Number(
+        formatEther(
+            getDataContract.data?.[1].result as bigint || BigInt(0)
+        )
+    )
+
+    const percentageRaised = (totalDonated / goalAmount) * 100;
+
     const { writeContract, isPending: pendingSign, data: txHash } = useWriteContract()
     const { isLoading: loadingTx, isSuccess: successTx, isError, error: errorTx } = useWaitForTransactionReceipt({
         chainId: base.id,
@@ -67,10 +90,11 @@ export default function DonationFill(props: DonationFillProps) {
 
     useEffect(() => {
         if (successTx) {
-            queryClient.invalidateQueries({ queryKey: [`get-campaign-${props.campaignId}`] })
+            getDataContract.refetch();
+            toast.dismiss("donate-loading");
             toast.success("Donation Successful", {
-                id: "donate-loading",
-                duration: 3000,
+                id: "donate-success",
+                duration: 10000,
                 description: () => (
                     <div className="flex flex-col text-sm">
                         <p>Your donation was successful! Thank you for your support.</p>
@@ -83,7 +107,12 @@ export default function DonationFill(props: DonationFillProps) {
                         </Link>
                     </div>
                 ),
+                cancel: {
+                    label: 'close',
+                    onClick: () => console.log(`Explorer: https://basescan.org/tx/${txHash}`),
+                },
             });
+            setDonationAmount("");
         }
         if (isError) {
             toast.dismiss("donate-loading");
@@ -150,9 +179,15 @@ export default function DonationFill(props: DonationFillProps) {
                     width="28"
                     height="28"
                 />
-                <h3 className="font-medium text-2xl">
-                    <strong>{props.raised}</strong> ETH Raised
-                </h3>
+                {
+                    getDataContract.isPending || getDataContract.isRefetching ? (
+                        <Skeleton className="w-24 h-6 rounded-full bg-gray-200" />
+                    ) : (
+                        <h3 className="font-medium text-2xl">
+                            <strong>{totalDonated}</strong> ETH Raised
+                        </h3>
+                    )
+                }
             </div>
             <div className="flex items-center gap-2">
                 <Progress
@@ -161,12 +196,18 @@ export default function DonationFill(props: DonationFillProps) {
                     bgClassName="bg-gray-200"
                     value={percentageRaised}
                 />
-                <p className="font-medium">{percentageRaised.toFixed(1)}%</p>
+                {
+                    getDataContract.isPending || getDataContract.isRefetching ? (
+                        <Skeleton className="w-8 h-3 rounded-full bg-gray-200" />
+                    ) : (
+                        <p className="font-medium">{percentageRaised.toFixed(1)}%</p>
+                    )
+                }
             </div>
             <div className="flex gap-4 items-center text-sm">
                 <div className="flex items-center gap-2">
                     <Goal size={16} />
-                    <p>{props.goal} ETH Goal</p>
+                    <p>{goalAmount} ETH Goal</p>
                 </div>
                 {/* <div className="flex items-center gap-2">
                     <Heart size={16} />

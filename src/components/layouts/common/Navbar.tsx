@@ -17,7 +17,7 @@ export default function Navbar({isHomePage}: {isHomePage?: boolean}) {
                         src={"/pawfund.svg"}
                         alt="PawFund Logo"
                         width={152}
-                        height={50}
+                        height={0}
                         className="w-auto h-auto"
                     />
                 </Link>
