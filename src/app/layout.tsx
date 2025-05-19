@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import { Bagel_Fat_One, Space_Grotesk } from "next/font/google";
-import Navbar from "@/components/layouts/common/Navbar";
 import { headers } from "next/headers";
 import Web3Provider from "./Web3Provider";
 import "./globals.css";
-import Footer from "@/components/layouts/common/Footer";
 import { Toaster } from "@/components/ui/sonner";
 
 const BagelFatOne = Bagel_Fat_One({

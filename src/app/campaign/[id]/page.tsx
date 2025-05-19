@@ -4,12 +4,12 @@ import { getCampaignById, getCampaignOwner } from "@/lib/fetcher/campaign";
 import { getUserByAddress } from "@/lib/fetcher/user";
 import { truncateAddress } from "@/lib/utils";
 import { Telescope } from "lucide-react";
-import type { Metadata, ResolvingMetadata } from 'next'
+import type { Metadata } from 'next'
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }, parent: ResolvingMetadata): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
     const { id } = await params;
     const getCampaign = await getCampaignById(id);
 

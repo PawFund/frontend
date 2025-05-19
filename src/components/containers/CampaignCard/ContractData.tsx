@@ -38,14 +38,14 @@ export function ContractData({ contractAddress }: { contractAddress: string }) {
     const recived = totalDonated?.result as bigint || BigInt(0);
 
     useEffect(() => {
-        if (goalAmount?.result && totalDonated?.result) {
+        if (recived && goal) {
             const percentage =
                 (Number(formatEther(recived)) /
                     Number(formatEther(goal))) *
                 100;
             setRaisedPercentage(percentage);
         }
-    }, [goalAmount, totalDonated])
+    }, [recived, goal])
 
     return (
         <>

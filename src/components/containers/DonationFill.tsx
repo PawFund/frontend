@@ -127,7 +127,7 @@ export default function DonationFill(props: DonationFillProps) {
             });
         }
 
-    }, [successTx, isError, errorTx])
+    }, [successTx, isError, errorTx, txHash, getDataContract]);
 
     const handleDonationSelect = (value: string) => {
         setDonationAmount(value);
